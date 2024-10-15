@@ -16,8 +16,7 @@ type Config struct {
 	JWT_Secret string
 }
 
-// NewConfig is a constructor for Config
-func NewConfig() *Config {
+func NewConfig() (*Config, error) {
 	viper.AddConfigPath(".")
 	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
@@ -36,5 +35,6 @@ func NewConfig() *Config {
 		},
 		Port:       viper.GetString("PORT"),
 		JWT_Secret: viper.GetString("JWT_SECRET"),
-	}
+	}, nil
+
 }
