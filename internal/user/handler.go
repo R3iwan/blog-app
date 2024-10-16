@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/R3iwan/blog-app/pkg/config"
 )
 
-func RegisterUser(w http.ResponseWriter, r *http.Request) {
+func RegisterUser(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	var req RegisterRequest
 
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -15,7 +17,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Username == "" || req.Password == "" || req.Email == "" {
+	if req.Username == "" || req.Password == "" || req.Email == "" || req.Role == "" {
 		http.Error(w, "username, password, and email are required", http.StatusBadRequest)
 	}
 
@@ -30,7 +32,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("User successfully registered"))
 }
 
-func LoginUser(w http.ResponseWriter, r *http.Request) {
+func LoginUser(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	var req LoginRequest
 
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -44,7 +46,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := Login(req)
+	token, err := Login(req, cfg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return

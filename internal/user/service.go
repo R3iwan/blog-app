@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/R3iwan/blog-app/internal/db"
 	"github.com/R3iwan/blog-app/internal/middleware"
@@ -15,17 +17,12 @@ func Register(req RegisterRequest) error {
 		return err
 	}
 
-	_, err = db.DB.Exec(context.Background(), "INSERT INTO users (username, password_hash, email) VALUES ($1, $2, $3)", req.Username, hashedPassword, req.Email)
+	_, err = db.DB.Exec(context.Background(), "INSERT INTO users (username, password_hash, email, role) VALUES ($1, $2, $3, $4)", req.Username, hashedPassword, req.Email, req.Role)
 	return err
 }
 
-func Login(req LoginRequest) (string, error) {
-	hashedPassword, userID, err := getHashPassword(req.Username)
-	if err != nil {
-		return "", err
-	}
-
-	cfg, err := config.NewConfig()
+func Login(req LoginRequest, cfg *config.Config) (string, error) {
+	hashedPassword, userID, dbRole, err := getUserDetails(req.Username)
 	if err != nil {
 		return "", err
 	}
@@ -35,7 +32,11 @@ func Login(req LoginRequest) (string, error) {
 		return "", err
 	}
 
-	token, jwtErr := middleware.GenerateJWT(userID, cfg)
+	if req.Role != dbRole {
+		return "", fmt.Errorf("role mismatch")
+	}
+
+	token, jwtErr := middleware.GenerateJWT(userID, req.Username, dbRole, time.Now().Add(15*time.Minute), cfg)
 	if jwtErr != nil {
 		return "", jwtErr
 	}
@@ -52,14 +53,15 @@ func hashPassword(password string) (string, error) {
 	return string(bcryptPassword), nil
 }
 
-func getHashPassword(username string) (string, int, error) {
+func getUserDetails(username string) (string, int, string, error) {
 	var password string
 	var userID int
+	var role string
 
-	err := db.DB.QueryRow(context.Background(), "SELECT password_hash FROM users WHERE username = $1", username).Scan(&password)
+	err := db.DB.QueryRow(context.Background(), "SELECT password_hash, id, role FROM users WHERE username = $1", username).Scan(&password, &userID, &role)
 	if err != nil {
-		return "", 0, err
+		return "", 0, "", err
 	}
 
-	return password, userID, nil
+	return password, userID, role, nil
 }

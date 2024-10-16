@@ -2,7 +2,10 @@ package blog
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+
+	"github.com/R3iwan/blog-app/internal/middleware"
 )
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +16,13 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authorID := r.Context().Value("userIDKey").(int)
+	authorID, ok := r.Context().Value(middleware.UserIDKey).(int)
+	if !ok {
+		log.Println("Unauthorized: missing userID in handler")
+		http.Error(w, "Unauthorized: missing userID", http.StatusUnauthorized)
+		return
+	}
+
 	postID, err := CreatePost(req, authorID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,6 +52,14 @@ func UpdatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	authorID := r.Context().Value(middleware.UserIDKey).(int)
+	userRole := r.Context().Value(middleware.RoleKey).(string)
+
+	if userRole != "admin" && !isPostOwner(req.ID, authorID) {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+
 	err = UpdatePost(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,6 +75,14 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	authorID := r.Context().Value(middleware.UserIDKey).(int)
+	userRole := r.Context().Value(middleware.RoleKey).(string)
+
+	if userRole != "admin" && !isPostOwner(req.ID, authorID) {
+		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
 

@@ -30,9 +30,14 @@ func main() {
 	defer connDB.Close()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/register", user.RegisterUser).Methods("POST")
-	r.HandleFunc("/api/v1/login", user.LoginUser).Methods("POST")
-	r.HandleFunc("/api/v1/blog/posts", blog.CreatePostHandler).Methods("POST")
+	r.HandleFunc("/api/v1/register", func(w http.ResponseWriter, r *http.Request) {
+		user.RegisterUser(w, r, cfg)
+	}).Methods("POST")
+
+	r.HandleFunc("/api/v1/login", func(w http.ResponseWriter, r *http.Request) {
+		user.LoginUser(w, r, cfg)
+	}).Methods("POST")
+
 	r.Handle("/api/v1/posts", middleware.JWTMiddleware(http.HandlerFunc(blog.CreatePostHandler), cfg)).Methods("POST")
 	r.Handle("/api/v1/posts/{id}", middleware.JWTMiddleware(http.HandlerFunc(blog.UpdatePostHandler), cfg)).Methods("PUT")
 	r.Handle("/api/v1/posts/{id}", middleware.JWTMiddleware(http.HandlerFunc(blog.DeletePostHandler), cfg)).Methods("DELETE")

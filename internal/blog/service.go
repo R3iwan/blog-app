@@ -2,6 +2,7 @@ package blog
 
 import (
 	"context"
+	"log"
 
 	"github.com/R3iwan/blog-app/internal/db"
 )
@@ -54,4 +55,15 @@ func DeletePost(req DeletePostRequest) error {
 		return err
 	}
 	return nil
+}
+
+func isPostOwner(postID, userID int) bool {
+	var ownerID int
+	err := db.DB.QueryRow(context.Background(), "SELECT author_id FROM posts WHERE id = $1", postID).Scan(&ownerID)
+	if err != nil {
+		log.Printf("Error checking post ownership: %v", err)
+		return false
+	}
+
+	return ownerID == userID
 }
