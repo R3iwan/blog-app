@@ -31,7 +31,7 @@ func NewConfig() (*Config, error) {
 			Port:     viper.GetInt("POSTGRES_PORT"),
 			User:     viper.GetString("POSTGRES_USER"),
 			Password: viper.GetString("POSTGRES_PASSWORD"),
-			DBName:   viper.GetString("POSTGRES_DBNAME"),
+			DBName:   viper.GetString("POSTGRES_DB"),
 		},
 		Port:       viper.GetString("PORT"),
 		JWT_Secret: viper.GetString("JWT_SECRET"),

@@ -14,17 +14,19 @@ var DB *pgxpool.Pool
 func InitDB(cfg *config.Config) (*pgxpool.Pool, error) {
 	postgresCfg := cfg.Postgres
 
-	DB, err := pgxpool.New(context.Background(),
-		fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-			postgresCfg.Host, postgresCfg.Port,
-			postgresCfg.User, postgresCfg.Password,
-			postgresCfg.DBName,
-		),
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		postgresCfg.User, postgresCfg.Password,
+		postgresCfg.Host, postgresCfg.Port,
+		postgresCfg.DBName,
 	)
+
+	pool, err := pgxpool.New(context.Background(), connStr)
 	if err != nil {
-		panic(fmt.Sprintf("Unable to connect to the database: %v", err))
+		return nil, fmt.Errorf("Unable to connect to the database %w", err)
 	}
 
+	DB = pool
+
 	log.Println("Database connected successfully")
-	return DB, nil
+	return pool, nil
 }
