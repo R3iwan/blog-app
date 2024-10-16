@@ -44,13 +44,20 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = Login(req)
+	token, err := Login(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
+	w.Header().Set("Authorization", "Bearer "+token)
 	log.Printf("User %s logged in", req.Username)
+
+	response := map[string]string{
+		"access_token": token,
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("User successfully logged in"))
+	w.Write([]byte("User successfully logged in\n\n"))
+	json.NewEncoder(w).Encode(response)
 }

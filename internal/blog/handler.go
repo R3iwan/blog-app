@@ -13,7 +13,8 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postID, err := CreatePost(req, 1)
+	authorID := r.Context().Value("userIDKey").(int)
+	postID, err := CreatePost(req, authorID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

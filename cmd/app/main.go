@@ -6,6 +6,7 @@ import (
 
 	"github.com/R3iwan/blog-app/internal/blog"
 	"github.com/R3iwan/blog-app/internal/db"
+	"github.com/R3iwan/blog-app/internal/middleware"
 	"github.com/R3iwan/blog-app/internal/user"
 	"github.com/R3iwan/blog-app/pkg/config"
 	"github.com/R3iwan/blog-app/pkg/logger"
@@ -32,9 +33,9 @@ func main() {
 	r.HandleFunc("/api/v1/register", user.RegisterUser).Methods("POST")
 	r.HandleFunc("/api/v1/login", user.LoginUser).Methods("POST")
 	r.HandleFunc("/api/v1/blog/posts", blog.CreatePostHandler).Methods("POST")
-	r.HandleFunc("/api/v1/blog/posts", blog.GetPostsHandler).Methods("GET")
-	r.HandleFunc("/api/v1/blog/posts", blog.UpdatePostHandler).Methods("PUT")
-	r.HandleFunc("/api/v1/blog/posts", blog.DeletePostHandler).Methods("DELETE")
+	r.Handle("/api/v1/posts", middleware.JWTMiddleware(http.HandlerFunc(blog.CreatePostHandler), cfg)).Methods("POST")
+	r.Handle("/api/v1/posts/{id}", middleware.JWTMiddleware(http.HandlerFunc(blog.UpdatePostHandler), cfg)).Methods("PUT")
+	r.Handle("/api/v1/posts/{id}", middleware.JWTMiddleware(http.HandlerFunc(blog.DeletePostHandler), cfg)).Methods("DELETE")
 
 	log.Printf("Server started on port %s", cfg.Port)
 	if err := http.ListenAndServe(":"+cfg.Port, r); err != nil {

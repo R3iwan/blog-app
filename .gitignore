@@ -25,3 +25,6 @@ Thumbs.db
 
 # Environment variable files
 .env
+
+#Structure
+*.str
