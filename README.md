@@ -1,6 +1,6 @@
 # Blog Application
 
-This is a simple blog application that uses a PostgreSQL database and a backend service. The services are managed using Docker Compose.
+This is a simple blog application that uses a PostgreSQL database and a backend service. The services are managed using Docker Compose. A RESTful blog API that allows users to create, read, update, and delete blog posts. Features JWT authentication to restrict access, and PostgreSQL is used for storing post data. Designed with a clear separation between handlers, services, and data models.
 
 ## Prerequisites
 
