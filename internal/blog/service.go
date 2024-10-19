@@ -20,14 +20,17 @@ func CreatePost(req CreatePostRequest, author_id int) (int, error) {
 
 func GetPosts() ([]Post, error) {
 	var posts []Post
-	rows, err := db.DB.Query(context.Background(), "SELECT id, title, content, author_id, created_at FROM posts")
+	rows, err := db.DB.Query(context.Background(),
+		`SELECT p.id, p.title, p.content, u.username, p.created_at
+	FROM posts p 
+	JOIN users u ON p.author_id = u.id`)
 	if err != nil {
 		return nil, err
 	}
 
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.AuthorID, &post.CreatedAt)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Username, &post.CreatedAt)
 		if err != nil {
 			return nil, err
 		}

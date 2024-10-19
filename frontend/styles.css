@@ -1,0 +1,136 @@
+/* styles.css */
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.blog-container {
+    display: flex;
+    gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.posts-list {
+    flex: 1 1 60%;
+}
+
+.posts-list, .new-post {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Post Styling */
+.post {
+    background-color: #fafafa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+}
+
+.post h3 {
+    font-size: 18px;
+    margin-top: 0;
+    color: #333;
+}
+
+.post p {
+    margin: 8px 0;
+    color: #666;
+}
+
+/* New Post Section */
+.new-post {
+    flex: 1 1 35%;
+    background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+    border: 1px solid #d0d0d0;
+    padding: 25px;
+    border-radius: 8px;
+    position: sticky;
+    top: 20px;
+}
+
+.new-post h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.new-post form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.new-post input, 
+.new-post textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+.new-post textarea {
+    min-height: 120px;
+}
+
+.new-post button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.new-post button:hover {
+    background-color: #218838;
+}
+
+/* Error Message Styling */
+#error-message {
+    color: red;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Button General Styles */
+button {
+    padding: 10px 20px;
+    margin: 5px 0;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .blog-container {
+        flex-direction: column;
+    }
+
+    .posts-list, .new-post {
+        flex: 1 1 100%;
+    }
+}

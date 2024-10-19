@@ -11,6 +11,7 @@ import (
 	"github.com/R3iwan/blog-app/pkg/config"
 	"github.com/R3iwan/blog-app/pkg/logger"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func init() {
@@ -39,11 +40,13 @@ func main() {
 	}).Methods("POST")
 
 	r.Handle("/api/v1/posts", middleware.JWTMiddleware(http.HandlerFunc(blog.CreatePostHandler), cfg)).Methods("POST")
-	r.Handle("/api/v1/posts/{id}", middleware.JWTMiddleware(http.HandlerFunc(blog.UpdatePostHandler), cfg)).Methods("PUT")
-	r.Handle("/api/v1/posts/{id}", middleware.JWTMiddleware(http.HandlerFunc(blog.DeletePostHandler), cfg)).Methods("DELETE")
+	r.Handle("/api/v1/posts", middleware.JWTMiddleware(http.HandlerFunc(blog.UpdatePostHandler), cfg)).Methods("PUT")
+	r.Handle("/api/v1/posts", middleware.JWTMiddleware(http.HandlerFunc(blog.DeletePostHandler), cfg)).Methods("DELETE")
+	r.Handle("/api/v1/posts", middleware.JWTMiddleware(http.HandlerFunc(blog.GetPostsHandler), cfg)).Methods("GET")
 
+	handler := cors.AllowAll().Handler(r)
 	log.Printf("Server started on port %s", cfg.Port)
-	if err := http.ListenAndServe(":"+cfg.Port, r); err != nil {
+	if err := http.ListenAndServe(":"+cfg.Port, handler); err != nil {
 		log.Fatal(err)
 	}
 }

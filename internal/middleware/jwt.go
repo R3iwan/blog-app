@@ -54,16 +54,11 @@ func JWTMiddleware(next http.Handler, cfg *config.Config) http.Handler {
 			http.Error(w, "Unauthorized: missing userID", http.StatusUnauthorized)
 			return
 		}
-
-		log.Printf("Extracted userID: %v", userID)
-		log.Printf("Extracted role: %v", role)
-		log.Printf("JWT Claims: %+v\n", *claims)
-
+		
 		ctx := context.WithValue(r.Context(), UserIDKey, int(userID))
 		ctx = context.WithValue(ctx, RoleKey, role)
 		next.ServeHTTP(w, r.WithContext(ctx))
 
-		log.Printf("userID set in context: %v", userID)
 	})
 }
 

@@ -18,7 +18,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	}
 
 	if req.Username == "" || req.Password == "" || req.Email == "" || req.Role == "" {
-		http.Error(w, "username, password, and email are required", http.StatusBadRequest)
+		http.Error(w, "Username, Password, Email, and Role are required", http.StatusBadRequest)
 	}
 
 	err = Register(req)
@@ -27,9 +27,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 		return
 	}
 
-	log.Printf("User %s registered", req.Username)
+	log.Printf("%s %s registered", req.Role, req.Username)
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("User successfully registered"))
+	w.Write([]byte("%s successfully registered"))
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
@@ -53,13 +53,13 @@ func LoginUser(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	}
 
 	w.Header().Set("Authorization", "Bearer "+token)
-	log.Printf("User %s logged in", req.Username)
+	log.Printf("%s %s logged in", req.Role, req.Username)
 
 	response := map[string]string{
+		"message":      "User successfully logged in",
 		"access_token": token,
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("User successfully logged in\n\n"))
 	json.NewEncoder(w).Encode(response)
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- blog.html -->
+    <div class="blog-posts">
+    <h1>Blog Posts</h1>
+    <div id="posts-container">
+        <!-- Posts will be dynamically loaded here -->
+    </div>
+    <p id="error-message"></p>
+    </div>
+
+    <div class="new-post">
+        <h2>Create New Post</h2>
+        <form id="create-post-form">
+            <input type="text" id="new-post-title" placeholder="Title" required>
+            <textarea id="new-post-content" placeholder="Content" required></textarea>
+            <button type="submit">Create Post</button>
+        </form>
+        <p id="create-error-message"></p>
+    </div>
+
+    <script src="blog.js" defer></script>
+</body>
+</html>
